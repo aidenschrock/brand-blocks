@@ -13,7 +13,7 @@ import { OrderedDither } from "./ordered dither/OrderedDither";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
 import { useControls } from 'leva'
 
-function App() {
+function App(props) {
   // const { backgroundColor, ambientColor, ambientIntensitiy, blockColor } = useControls({
   //   backgroundColor: '#00FFFF',
   //   ambientColor: '#35d9d9',
@@ -34,8 +34,11 @@ function App() {
   function Meshes() {
     const boxGroup = useRef();
     const centerBlock = useRef();
-    const [dTexture, bTexture, uilTexture, ranTexture, ranTextureFlipped] =
-      useTexture([dImage, bImage, uilImage, ranImage, ranImageFlipped]);
+    const imageArray = JSON.parse(props.images)
+
+    const [uilTexture, dTexture, bTexture, ranTexture, ranTextureFlipped] =
+      useTexture([imageArray[0], imageArray[1], imageArray[2], imageArray[3], imageArray[4]]);
+
 
     const { rotateX } = useSpring({
       from: { rotateX: 0 },
