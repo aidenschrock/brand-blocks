@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
-import { OrbitControls, Bounds, useTexture, Environment } from "@react-three/drei";
+import { OrbitControls, Bounds, useTexture, Environment, PresentationControls } from "@react-three/drei";
 import { useRef } from "react";
 import { useSpring, animated, config } from "@react-spring/three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
@@ -36,7 +36,6 @@ function App(props) {
     const centerBlock = useRef();
     const convertedString = props.images.replace(/'/g, '"');
     const imageArray = JSON.parse(convertedString)
-    console.log(imageArray)
     const [uilTexture, dTexture, bTexture, ranTexture, ranTextureFlipped] =
       useTexture([imageArray[0], imageArray[1], imageArray[2], imageArray[3], imageArray[4]]);
 
@@ -66,7 +65,7 @@ function App(props) {
     });
 
     return (
-      <Bounds fit observe margin={1}>
+      <Bounds fit observe margin={.8}>
         <group ref={boxGroup}>
           <mesh castShadow receiveShadow position={[-1.1, 0, 0]} geometry={geometry}>
             <meshStandardMaterial metalness={1} roughness={.2} color={blockColor} map={bTexture} />
@@ -95,9 +94,16 @@ function App(props) {
   return (
     <>
       <Canvas shadows>
-        {/* <OrbitControls makeDefault /> */}
         <Environment preset="warehouse" background blur={0.5} />
-        <Meshes />
+        <PresentationControls global
+          rotation={[0.13, 0.1, 0]}
+          polar={[-0.2, 0.2]}
+          azimuth={[-0.3, 0.3]}
+          config={{ mass: 2, tension: 400 }}
+          snap={{ mass: 4, tension: 400 }}>
+          <Meshes />
+        </PresentationControls>
+
         <EffectComposer>
           <OrderedDither invertDither={true} darkThreshold={25} />
           <SSAO
