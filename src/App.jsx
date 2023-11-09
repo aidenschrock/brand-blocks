@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
-import { OrbitControls, Bounds, useTexture } from "@react-three/drei";
+import { OrbitControls, Bounds, useTexture, Environment } from "@react-three/drei";
 import { useRef } from "react";
 import { useSpring, animated, config } from "@react-spring/three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
@@ -11,8 +11,22 @@ import ranImage from "./assets/ran.png";
 import ranImageFlipped from "./assets/ran-flipped.png";
 import { OrderedDither } from "./ordered dither/OrderedDither";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
+import { useControls } from 'leva'
 
 function App() {
+  // const { backgroundColor, ambientColor, ambientIntensitiy, blockColor } = useControls({
+  //   backgroundColor: '#00FFFF',
+  //   ambientColor: '#35d9d9',
+  //   ambientIntensitiy: 6,
+  //   blockColor: '#FFFFFF'
+  // })
+  const { backgroundColor, ambientColor, ambientIntensitiy, blockColor } = {
+    backgroundColor: '#00FFFF',
+    ambientColor: '#35d9d9',
+    ambientIntensitiy: 6,
+    blockColor: '#FFFFFF'
+  };
+
   const geometry = new RoundedBoxGeometry(1, 1, 1, 6, 0.1);
 
   const STEP_DURATION = 2000;
@@ -50,23 +64,24 @@ function App() {
     return (
       <Bounds fit observe margin={1}>
         <group ref={boxGroup}>
-          <mesh position={[-1.1, 0, 0]} geometry={geometry}>
-            <meshLambertMaterial map={bTexture} />
+          <mesh castShadow receiveShadow position={[-1.1, 0, 0]} geometry={geometry}>
+            <meshStandardMaterial metalness={1} roughness={.2} color={blockColor} map={bTexture} />
           </mesh>
           <animated.mesh
             rotation-x={rotateX}
             ref={centerBlock}
             geometry={geometry}
+            castShadow receiveShadow
           >
-            <meshLambertMaterial attach="material-0" />
-            <meshLambertMaterial attach="material-1" />
-            <meshLambertMaterial attach="material-2" map={uilTexture} />
-            <meshLambertMaterial attach="material-3" map={uilTexture} />
-            <meshLambertMaterial attach="material-4" map={ranTexture} />
-            <meshLambertMaterial attach="material-5" map={ranTextureFlipped} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-0" color={blockColor} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-1" color={blockColor} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-2" color={blockColor} map={uilTexture} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-3" color={blockColor} map={uilTexture} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-4" color={blockColor} map={ranTexture} />
+            <meshStandardMaterial metalness={1} roughness={.2} attach="material-5" color={blockColor} map={ranTextureFlipped} />
           </animated.mesh>
-          <mesh position={[1.1, 0, 0]} geometry={geometry}>
-            <meshLambertMaterial map={dTexture} />
+          <mesh castShadow receiveShadow position={[1.1, 0, 0]} geometry={geometry}>
+            <meshStandardMaterial metalness={1} roughness={.2} color={blockColor} map={dTexture} />
           </mesh>
         </group>
       </Bounds>
@@ -75,13 +90,12 @@ function App() {
 
   return (
     <>
-      <Canvas>
-        <OrbitControls makeDefault />
-        <ambientLight intensity={2} color="#F8147F" />
-        <directionalLight intensity={2} position={[0, 10, 20]} />
+      <Canvas shadows>
+        {/* <OrbitControls makeDefault /> */}
+        <Environment preset="warehouse" background blur={0.5} />
         <Meshes />
         <EffectComposer>
-          <OrderedDither invertDither={false} darkThreshold={10} />
+          <OrderedDither invertDither={true} darkThreshold={25} />
           <SSAO
             radius={0.4}
             intensity={50}
