@@ -34,8 +34,9 @@ function App(props) {
   function Meshes() {
     const boxGroup = useRef();
     const centerBlock = useRef();
-    const imageArray = JSON.parse(props.images)
-
+    const convertedString = props.images.replace(/'/g, '"');
+    const imageArray = JSON.parse(convertedString)
+    console.log(imageArray)
     const [uilTexture, dTexture, bTexture, ranTexture, ranTextureFlipped] =
       useTexture([imageArray[0], imageArray[1], imageArray[2], imageArray[3], imageArray[4]]);
 
